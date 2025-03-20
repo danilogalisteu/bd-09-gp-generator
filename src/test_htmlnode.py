@@ -9,10 +9,10 @@ class TestHTMLNode(unittest.TestCase):
     node_value: str = "This is a paragraph"
     node2_tag: str = "a"
     node2_value: str = "This is a link"
-    node2_props: ClassVar[dict[str, str]] = {"href": "https://www.example.com"}
+    node2_props: ClassVar[dict[str, str | bool]] = {"href": "https://www.example.com"}
     node3_tag: str = "div"
     node3_children: ClassVar[list[HTMLNode]] = []
-    node3_props: ClassVar[dict[str, str]] = {"id": "content", "class": "h-full flex flex-col", "disabled": True}
+    node3_props: ClassVar[dict[str, str | bool]] = {"id": "content", "class": "h-full flex flex-col", "disabled": True}
 
     def test_init(self):
         node = HTMLNode(self.node_tag, self.node_value)

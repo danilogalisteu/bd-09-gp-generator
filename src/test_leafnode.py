@@ -9,7 +9,7 @@ class TestLeafNode(unittest.TestCase):
     node_value: str = "This is a paragraph"
     node2_tag: str = "a"
     node2_value: str = "This is a link"
-    node2_props: ClassVar[dict[str, str]] = {"href": "https://www.example.com", "disabled": True}
+    node2_props: ClassVar[dict[str, str | bool]] = {"href": "https://www.example.com", "disabled": True}
 
     def test_init(self):
         node = LeafNode(self.node_tag, self.node_value)
