@@ -12,7 +12,7 @@ class TestHTMLNode(unittest.TestCase):
     node2_props: ClassVar[dict[str, str]] = {"href": "https://www.example.com"}
     node3_tag: str = "div"
     node3_children: ClassVar[list[HTMLNode]] = []
-    node3_props: ClassVar[dict[str, str]] = {"id": "content", "class": "h-full flex flex-col"}
+    node3_props: ClassVar[dict[str, str]] = {"id": "content", "class": "h-full flex flex-col", "disabled": True}
 
     def test_init(self):
         node = HTMLNode(self.node_tag, self.node_value)
@@ -59,7 +59,7 @@ class TestHTMLNode(unittest.TestCase):
         node2 = HTMLNode(self.node2_tag, self.node2_value, props=self.node2_props)
         self.assertEqual(node2.props_to_html(), node2_html_props)
 
-        node3_html_props = ' id="content" class="h-full flex flex-col"'
+        node3_html_props = ' id="content" class="h-full flex flex-col" disabled'
         node3 = HTMLNode(self.node3_tag, children=self.node3_children, props=self.node3_props)
         self.assertEqual(node3.props_to_html(), node3_html_props)
 
