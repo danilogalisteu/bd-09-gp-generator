@@ -42,7 +42,7 @@ class TestLeafNode(unittest.TestCase):
         self.assertEqual(node2.props_to_html(), node2_html_props)
 
     def test_html(self):
-        node_html = '<p>This is a paragraph</p>'
+        node_html = "<p>This is a paragraph</p>"
         node = LeafNode(self.node_tag, self.node_value)
         self.assertEqual(node.to_html(), node_html)
 
