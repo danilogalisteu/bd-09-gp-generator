@@ -39,6 +39,52 @@ class TestTextNode(unittest.TestCase):
         node2 = TextNode(self.node_text, self.node_type, self.node2_url)
         self.assertNotEqual(node, node2)
 
+    def test_leaf_normal(self):
+        leaf = TextNode(self.node_text, TextType.NORMAL, None).to_leaf()
+        self.assertIsNone(leaf.tag)
+        self.assertEqual(leaf.value, self.node_text)
+        self.assertIsNone(leaf.props)
+
+    def test_leaf_bold(self):
+        leaf = TextNode(self.node_text, TextType.BOLD, None).to_leaf()
+        self.assertEqual(leaf.tag, "b")
+        self.assertEqual(leaf.value, self.node_text)
+        self.assertIsNone(leaf.props)
+
+    def test_leaf_italic(self):
+        leaf = TextNode(self.node_text, TextType.ITALIC, None).to_leaf()
+        self.assertEqual(leaf.tag, "i")
+        self.assertEqual(leaf.value, self.node_text)
+        self.assertIsNone(leaf.props)
+
+    def test_leaf_code(self):
+        leaf = TextNode(self.node_text, TextType.CODE, None).to_leaf()
+        self.assertEqual(leaf.tag, "code")
+        self.assertEqual(leaf.value, self.node_text)
+        self.assertIsNone(leaf.props)
+
+    def test_leaf_link(self):
+        leaf1 = TextNode(self.node_text, TextType.LINK, None).to_leaf()
+        self.assertEqual(leaf1.tag, "a")
+        self.assertEqual(leaf1.value, self.node_text)
+        self.assertEqual(leaf1.props, {"href": ""})
+
+        leaf2 = TextNode(self.node_text, TextType.LINK, self.node2_url).to_leaf()
+        self.assertEqual(leaf2.tag, "a")
+        self.assertEqual(leaf2.value, self.node_text)
+        self.assertEqual(leaf2.props, {"href": self.node2_url})
+
+    def test_leaf_image(self):
+        leaf1 = TextNode(self.node_text, TextType.IMAGE, None).to_leaf()
+        self.assertEqual(leaf1.tag, "img")
+        self.assertEqual(leaf1.value, "")
+        self.assertEqual(leaf1.props, {"alt": self.node_text, "src": ""})
+
+        leaf2 = TextNode(self.node_text, TextType.IMAGE, self.node2_url).to_leaf()
+        self.assertEqual(leaf2.tag, "img")
+        self.assertEqual(leaf2.value, "")
+        self.assertEqual(leaf2.props, {"alt": self.node_text, "src": self.node2_url})
+
 
 if __name__ == "__main__":
     unittest.main()
