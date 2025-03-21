@@ -35,3 +35,19 @@ class TextNode:
                 return LeafNode("img", "", {"alt": self.text, "src": self.url or ""})
             case _:
                 raise ValueError("invalid text type")
+
+
+def split_nodes_delimiter(old_nodes, delimiter, text_type):
+    new_nodes = []
+    for node in old_nodes:
+        if node.text_type != TextType.TEXT or delimiter not in node.text:
+            new_nodes.append(node)
+        else:
+            if node.text.count(delimiter) % 2 != 0:
+                raise ValueError("unmatched delimiter found")
+
+            for i, part in enumerate(node.text.split(delimiter)):
+                if part:
+                    new_nodes.append(TextNode(part, TextType.TEXT if i % 2 == 0 else text_type))
+
+    return new_nodes
