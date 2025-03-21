@@ -1,3 +1,4 @@
+import re
 from dataclasses import dataclass
 from enum import Enum
 
@@ -51,3 +52,13 @@ def split_nodes_delimiter(old_nodes, delimiter, text_type):
                     new_nodes.append(TextNode(part, TextType.TEXT if i % 2 == 0 else text_type))
 
     return new_nodes
+
+
+def extract_markdown_images(text):
+    img_pattern = r"[\!]\[([^\]]*)\]\(([^\)]*)\)"
+    return re.findall(img_pattern, text)
+
+
+def extract_markdown_links(text):
+    link_pattern = r"(?<!!)\[([^\]]*)\]\(([^\)]*)\)"
+    return re.findall(link_pattern, text)
