@@ -1,3 +1,4 @@
+from dataclasses import dataclass
 from typing import Self
 
 
@@ -37,3 +38,32 @@ class HTMLNode:
                 elif v:
                     html += f" {k}"
         return html
+
+
+@dataclass
+class ParentNode(HTMLNode):
+    tag: str
+    children: list[HTMLNode]
+    props: dict[str, str | bool] | None = None
+
+    def to_html(self):
+        if not self.tag:
+            raise ValueError("missing tag")
+        if not self.children:
+            raise ValueError("missing children")
+
+        html = f"<{self.tag}{self.props_to_html()}>"
+        for child in self.children:
+            html += child.to_html()
+        html += f"</{self.tag}>"
+        return html
+
+
+@dataclass
+class LeafNode(HTMLNode):
+    tag: str | None
+    value: str | None
+    props: dict[str, str | bool] | None = None
+
+    def to_html(self):
+        return f"<{self.tag}{self.props_to_html()}>{self.value}</{self.tag}>" if self.tag else self.value
