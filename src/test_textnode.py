@@ -7,7 +7,7 @@ class TestTextNode(unittest.TestCase):
     node_text = "This is a text node"
     node_type = TextType.BOLD
     node2_text = "This is another text node"
-    node2_type = TextType.NORMAL
+    node2_type = TextType.TEXT
     node2_url = "http://www.example.com"
 
     def test_init(self):
@@ -40,7 +40,7 @@ class TestTextNode(unittest.TestCase):
         self.assertNotEqual(node, node2)
 
     def test_leaf_normal(self):
-        leaf = TextNode(self.node_text, TextType.NORMAL, None).to_leaf()
+        leaf = TextNode(self.node_text, TextType.TEXT, None).to_leaf()
         self.assertIsNone(leaf.tag)
         self.assertEqual(leaf.value, self.node_text)
         self.assertIsNone(leaf.props)
