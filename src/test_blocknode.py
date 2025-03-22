@@ -111,9 +111,9 @@ This is the same paragraph on a new line
 
     def test_parent_code(self):
         parent = BlockNode.from_text(self.node2_text).to_parent()
-        self.assertIsInstance(parent, LeafNode)
-        self.assertEqual(parent.tag, "blockquote")
-        self.assertEqual(parent.value, "This is a single-line code block")
+        self.assertIsInstance(parent, ParentNode)
+        self.assertEqual(parent.tag, "pre")
+        self.assertListEqual(parent.children, [LeafNode("code", "This is a single-line code block")])
         self.assertIsNone(parent.props)
 
     def test_parent_quote(self):
@@ -178,6 +178,33 @@ This is the same paragraph on a new line
             ],
         )
         self.assertIsNone(parent.props)
+
+    def test_document_html(self):
+        md = """
+This is **bolded** paragraph
+text in a p
+tag here
+
+This is another paragraph with _italic_ text and `code` here
+
+"""
+        html = BlockNode.from_document(md).to_html()
+        self.assertEqual(
+            html,
+            "<div><p>This is <b>bolded</b> paragraph text in a p tag here</p><p>This is another paragraph with <i>italic</i> text and <code>code</code> here</p></div>",
+        )
+
+        md = """
+```
+This is text that _should_ remain
+the **same** even with inline stuff
+```
+"""
+        html = BlockNode.from_document(md).to_html()
+        self.assertEqual(
+            html,
+            "<div><pre><code>This is text that _should_ remain\nthe **same** even with inline stuff</code></pre></div>",
+        )
 
 
 if __name__ == "__main__":

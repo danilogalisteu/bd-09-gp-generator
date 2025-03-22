@@ -58,12 +58,20 @@ class BlockNode:
     def blocks_from_text(cls, text):
         return [cls.from_text(block.strip()) for block in text.split("\n\n") if block]
 
+    @classmethod
+    def from_document(cls, text):
+        return ParentNode(
+            "div",
+            [block.to_parent() for block in cls.blocks_from_text(text)],
+        )
+
     def to_parent(self):
         match self.block_type:
             case BlockType.PARAGRAPH:
+                text = " ".join(self.text.split("\n"))
                 return ParentNode(
                     "p",
-                    [node.to_leaf() for node in TextNode.from_text(self.text)],
+                    [node.to_leaf() for node in TextNode.from_text(text)],
                 )
             case BlockType.HEADING:
                 heading, title = self.text.split("# ", maxsplit=1)
@@ -73,10 +81,12 @@ class BlockNode:
                     [node.to_leaf() for node in TextNode.from_text(title)],
                 )
             case BlockType.CODE:
-                return LeafNode(
-                    "blockquote",
-                    self.text.removeprefix("```").removesuffix("```"),
+                text = "\n".join(
+                    line for line in 
+                    self.text.removeprefix("```").removesuffix("```").split("\n")
+                    if line
                 )
+                return ParentNode("pre", [LeafNode("code", text)])
             case BlockType.QUOTE:
                 text = "\n".join([line.removeprefix(">") for line in self.text.split("\n")])
                 return ParentNode(
