@@ -1,6 +1,15 @@
 import unittest
 
-from markdownparser import MD_IMG_FORMAT, MD_IMG_RE_PATTERN, MD_LINK_FORMAT, MD_LINK_RE_PATTERN, nodes_from_text, split_nodes_delimiter, split_nodes_pattern
+from markdownparser import (
+    MD_IMG_FORMAT,
+    MD_IMG_RE_PATTERN,
+    MD_LINK_FORMAT,
+    MD_LINK_RE_PATTERN,
+    blocks_from_text,
+    nodes_from_text,
+    split_nodes_delimiter,
+    split_nodes_pattern,
+)
 from textnode import TextNode, TextType
 
 
@@ -122,6 +131,45 @@ class TestSplitNodes(unittest.TestCase):
                 TextNode("obi wan image", TextType.IMAGE, "https://i.imgur.com/fJRm4Vk.jpeg"),
                 TextNode(" and a ", TextType.TEXT),
                 TextNode("link", TextType.LINK, "https://boot.dev"),
+            ],
+        )
+
+    def test_blocks(self):
+        text = """
+# This is a heading
+
+This is a paragraph of text. It has some **bold** and _italic_ words inside of it.
+
+- This is the first list item in a list block
+- This is a list item
+- This is another list item
+"""
+        blocks = blocks_from_text(text)
+        self.assertListEqual(
+            blocks,
+            [
+                "# This is a heading",
+                "This is a paragraph of text. It has some **bold** and _italic_ words inside of it.",
+                "- This is the first list item in a list block\n- This is a list item\n- This is another list item",
+            ],
+        )
+
+        text = """
+This is **bolded** paragraph
+
+This is another paragraph with _italic_ text and `code` here
+This is the same paragraph on a new line
+
+- This is a list
+- with items
+"""
+        blocks = blocks_from_text(text)
+        self.assertListEqual(
+            blocks,
+            [
+                "This is **bolded** paragraph",
+                "This is another paragraph with _italic_ text and `code` here\nThis is the same paragraph on a new line",
+                "- This is a list\n- with items",
             ],
         )
 

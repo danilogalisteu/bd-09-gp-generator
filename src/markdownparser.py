@@ -53,3 +53,7 @@ def nodes_from_text(text):
     new_nodes = split_nodes_delimiter(new_nodes, "**", TextType.BOLD)
     new_nodes = split_nodes_pattern(new_nodes, MD_IMG_RE_PATTERN, TextType.IMAGE, MD_IMG_FORMAT)
     return split_nodes_pattern(new_nodes, MD_LINK_RE_PATTERN, TextType.LINK, MD_LINK_FORMAT)
+
+
+def blocks_from_text(text):
+    return [block.strip() for block in text.split("\n\n") if block]
