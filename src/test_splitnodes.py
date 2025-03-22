@@ -1,6 +1,6 @@
 import unittest
 
-from textnode import TextNode, TextType, MD_IMG_FORMAT, MD_IMG_RE_PATTERN, MD_LINK_FORMAT, MD_LINK_RE_PATTERN
+from textnode import MD_IMG_FORMAT, MD_IMG_RE_PATTERN, MD_LINK_FORMAT, MD_LINK_RE_PATTERN, TextNode, TextType
 
 
 class TestSplitNodes(unittest.TestCase):

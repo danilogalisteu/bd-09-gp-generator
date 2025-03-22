@@ -87,5 +87,4 @@ class TextNode:
         new_nodes = cls.split_nodes_delimiter(new_nodes, "_", TextType.ITALIC)
         new_nodes = cls.split_nodes_delimiter(new_nodes, "**", TextType.BOLD)
         new_nodes = cls.split_nodes_pattern(new_nodes, MD_IMG_RE_PATTERN, TextType.IMAGE, MD_IMG_FORMAT)
-        new_nodes = cls.split_nodes_pattern(new_nodes, MD_LINK_RE_PATTERN, TextType.LINK, MD_LINK_FORMAT)
-        return new_nodes
+        return cls.split_nodes_pattern(new_nodes, MD_LINK_RE_PATTERN, TextType.LINK, MD_LINK_FORMAT)
