@@ -1,11 +1,23 @@
 import re
+from enum import Enum
 
 from textnode import TextNode, TextType
 
+MD_HEADING_RE_PATTERN = r"[#]{1-6}\s{1}"
 MD_IMG_FORMAT = "![{0}]({1})"
 MD_IMG_RE_PATTERN = r"[\!]\[([^\]]*)\]\(([^\)]*)\)"
 MD_LINK_FORMAT = "[{0}]({1})"
 MD_LINK_RE_PATTERN = r"(?<!!)\[([^\]]*)\]\(([^\)]*)\)"
+
+
+class BlockType(Enum):
+    PARAGRAPH = "paragraph"
+    HEADING = "heading"
+    CODE = "code"
+    QUOTE = "quote"
+    UNORDERED_LIST = "unordered_list"
+    ORDERED_LIST = "ordered_list"
+
 
 
 def split_nodes_delimiter(old_nodes, delimiter, text_type):
@@ -57,3 +69,31 @@ def nodes_from_text(text):
 
 def blocks_from_text(text):
     return [block.strip() for block in text.split("\n\n") if block]
+
+
+def block_to_block_type(text):
+    if re.match(MD_HEADING_RE_PATTERN, text):
+        return BlockType.HEADING
+
+    if text.startswith("```") and text.endswith("```"):
+        return BlockType.CODE
+
+    lines = text.split("\n")
+
+    if all(line.startswith(">") for line in lines):
+        return BlockType.QUOTE
+
+    if all(line.startswith("- ") for line in lines):
+        return BlockType.UNORDERED_LIST
+
+    item_count = 1
+    ordered = True
+    for line in lines:
+        if not line.startswith(f"{item_count}. "):
+            ordered = False
+            break
+        item_count += 1
+    if ordered:
+        return BlockType.ORDERED_LIST
+
+    return BlockType.PARAGRAPH

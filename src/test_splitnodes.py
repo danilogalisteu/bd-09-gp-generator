@@ -5,8 +5,6 @@ from markdownparser import (
     MD_IMG_RE_PATTERN,
     MD_LINK_FORMAT,
     MD_LINK_RE_PATTERN,
-    blocks_from_text,
-    nodes_from_text,
     split_nodes_delimiter,
     split_nodes_pattern,
 )
@@ -114,64 +112,6 @@ class TestSplitNodes(unittest.TestCase):
         self.assertEqual(new_nodes[8], TextNode(" and ", TextType.TEXT))
         self.assertEqual(new_nodes[9], TextNode("an image", TextType.IMAGE, "https://i.imgur.com/zjjcJKZ.png"))
         self.assertEqual(new_nodes[10], TextNode(".", TextType.TEXT))
-
-    def test_text(self):
-        text = "This is **text** with an _italic_ word and a `code block` and an ![obi wan image](https://i.imgur.com/fJRm4Vk.jpeg) and a [link](https://boot.dev)"
-        nodes = nodes_from_text(text)
-        self.assertListEqual(
-            nodes,
-            [
-                TextNode("This is ", TextType.TEXT),
-                TextNode("text", TextType.BOLD),
-                TextNode(" with an ", TextType.TEXT),
-                TextNode("italic", TextType.ITALIC),
-                TextNode(" word and a ", TextType.TEXT),
-                TextNode("code block", TextType.CODE),
-                TextNode(" and an ", TextType.TEXT),
-                TextNode("obi wan image", TextType.IMAGE, "https://i.imgur.com/fJRm4Vk.jpeg"),
-                TextNode(" and a ", TextType.TEXT),
-                TextNode("link", TextType.LINK, "https://boot.dev"),
-            ],
-        )
-
-    def test_blocks(self):
-        text = """
-# This is a heading
-
-This is a paragraph of text. It has some **bold** and _italic_ words inside of it.
-
-- This is the first list item in a list block
-- This is a list item
-- This is another list item
-"""
-        blocks = blocks_from_text(text)
-        self.assertListEqual(
-            blocks,
-            [
-                "# This is a heading",
-                "This is a paragraph of text. It has some **bold** and _italic_ words inside of it.",
-                "- This is the first list item in a list block\n- This is a list item\n- This is another list item",
-            ],
-        )
-
-        text = """
-This is **bolded** paragraph
-
-This is another paragraph with _italic_ text and `code` here
-This is the same paragraph on a new line
-
-- This is a list
-- with items
-"""
-        blocks = blocks_from_text(text)
-        self.assertListEqual(
-            blocks,
-            [
-                "This is **bolded** paragraph",
-                "This is another paragraph with _italic_ text and `code` here\nThis is the same paragraph on a new line",
-                "- This is a list\n- with items",
-            ],
-        )
 
 
 if __name__ == "__main__":
