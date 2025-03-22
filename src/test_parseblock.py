@@ -1,7 +1,6 @@
 import unittest
 
 from blocknode import BlockNode, BlockType
-from textnode import TextNode, TextType
 
 
 class TestParseBlock(unittest.TestCase):

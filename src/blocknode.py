@@ -78,10 +78,7 @@ class BlockNode:
                     self.text.removeprefix("```").removesuffix("```"),
                 )
             case BlockType.QUOTE:
-                text = "\n".join([
-                    line.removeprefix(">")
-                    for line in self.text.split("\n")
-                ])
+                text = "\n".join([line.removeprefix(">") for line in self.text.split("\n")])
                 return ParentNode(
                     "blockquote",
                     [node.to_leaf() for node in TextNode.from_text(text)],

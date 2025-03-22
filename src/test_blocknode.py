@@ -2,7 +2,6 @@ import unittest
 
 from blocknode import BlockNode, BlockType
 from htmlnode import LeafNode, ParentNode
-from textnode import TextNode, TextType
 
 
 class TestBlockNode(unittest.TestCase):
@@ -169,7 +168,7 @@ This is the same paragraph on a new line
                 LeafNode("b", value="bold type"),
                 LeafNode(None, value=" expression, an "),
                 LeafNode("i", value="italic type"),
-                LeafNode(None, value=" expression and a " ),
+                LeafNode(None, value=" expression and a "),
                 LeafNode("code", value="code block"),
                 LeafNode(None, value=" expression. It also has "),
                 LeafNode("a", value="a link to boot dev", props={"href": "https://www.boot.dev"}),
