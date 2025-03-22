@@ -107,3 +107,13 @@ class TextNode:
                         new_nodes.append(TextNode(node_text, TextType.TEXT))
                         break
         return new_nodes
+
+    @classmethod
+    def from_text(cls, text):
+        node = cls(text, TextType.TEXT)
+        new_nodes = cls.split_nodes_delimiter([node], "`", TextType.CODE)
+        new_nodes = cls.split_nodes_delimiter(new_nodes, "_", TextType.ITALIC)
+        new_nodes = cls.split_nodes_delimiter(new_nodes, "**", TextType.BOLD)
+        new_nodes = cls.split_nodes_image(new_nodes)
+        new_nodes = cls.split_nodes_link(new_nodes)
+        return new_nodes
