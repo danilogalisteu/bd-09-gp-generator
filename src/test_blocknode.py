@@ -46,3 +46,58 @@ class TestBlockNode(unittest.TestCase):
         node1 = BlockNode.from_text(self.node1_text)
         node2 = BlockNode.from_text(self.node2_text)
         self.assertNotEqual(node1, node2)
+
+    def test_blocks_from_text(self):
+        text = """
+# This is a heading
+
+This is a paragraph of text. It has some **bold** and _italic_ words inside of it.
+
+- This is the first list item in a list block
+- This is a list item
+- This is another list item
+"""
+        blocks = BlockNode.blocks_from_text(text)
+        self.assertListEqual(
+            [block.text for block in blocks],
+            [
+                "# This is a heading",
+                "This is a paragraph of text. It has some **bold** and _italic_ words inside of it.",
+                "- This is the first list item in a list block\n- This is a list item\n- This is another list item",
+            ],
+        )
+        self.assertListEqual(
+            [block.block_type for block in blocks],
+            [
+                BlockType.HEADING,
+                BlockType.PARAGRAPH,
+                BlockType.UNORDERED_LIST,
+            ],
+        )
+
+        text = """
+This is **bolded** paragraph
+
+This is another paragraph with _italic_ text and `code` here
+This is the same paragraph on a new line
+
+- This is a list
+- with items
+"""
+        blocks = BlockNode.blocks_from_text(text)
+        self.assertListEqual(
+            [block.text for block in blocks],
+            [
+                "This is **bolded** paragraph",
+                "This is another paragraph with _italic_ text and `code` here\nThis is the same paragraph on a new line",
+                "- This is a list\n- with items",
+            ],
+        )
+        self.assertListEqual(
+            [block.block_type for block in blocks],
+            [
+                BlockType.PARAGRAPH,
+                BlockType.PARAGRAPH,
+                BlockType.UNORDERED_LIST,
+            ],
+        )

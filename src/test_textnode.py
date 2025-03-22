@@ -39,6 +39,25 @@ class TestTextNode(unittest.TestCase):
         node2 = TextNode(self.node_text, self.node_type, self.node2_url)
         self.assertNotEqual(node, node2)
 
+    def test_from_text(self):
+        text = "This is **text** with an _italic_ word and a `code block` and an ![obi wan image](https://i.imgur.com/fJRm4Vk.jpeg) and a [link](https://boot.dev)"
+        nodes = TextNode.from_text(text)
+        self.assertListEqual(
+            nodes,
+            [
+                TextNode("This is ", TextType.TEXT),
+                TextNode("text", TextType.BOLD),
+                TextNode(" with an ", TextType.TEXT),
+                TextNode("italic", TextType.ITALIC),
+                TextNode(" word and a ", TextType.TEXT),
+                TextNode("code block", TextType.CODE),
+                TextNode(" and an ", TextType.TEXT),
+                TextNode("obi wan image", TextType.IMAGE, "https://i.imgur.com/fJRm4Vk.jpeg"),
+                TextNode(" and a ", TextType.TEXT),
+                TextNode("link", TextType.LINK, "https://boot.dev"),
+            ],
+        )
+
     def test_leaf_normal(self):
         leaf = TextNode(self.node_text, TextType.TEXT, None).to_leaf()
         self.assertIsNone(leaf.tag)
