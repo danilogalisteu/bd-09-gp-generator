@@ -3,7 +3,7 @@ from enum import Enum
 
 from textnode import TextNode, TextType
 
-MD_HEADING_RE_PATTERN = r"[#]{1-6}\s{1}"
+MD_HEADING_RE_PATTERN = r"^#{1,6} [\S\s]+"
 MD_IMG_FORMAT = "![{0}]({1})"
 MD_IMG_RE_PATTERN = r"[\!]\[([^\]]*)\]\(([^\)]*)\)"
 MD_LINK_FORMAT = "[{0}]({1})"
@@ -17,7 +17,6 @@ class BlockType(Enum):
     QUOTE = "quote"
     UNORDERED_LIST = "unordered_list"
     ORDERED_LIST = "ordered_list"
-
 
 
 def split_nodes_delimiter(old_nodes, delimiter, text_type):
