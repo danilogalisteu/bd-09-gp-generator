@@ -1,12 +1,13 @@
 import unittest
 
 from blocknode import BlockNode, BlockType
+from htmlnode import LeafNode, ParentNode
 from textnode import TextNode, TextType
 
 
 class TestBlockNode(unittest.TestCase):
     node1_text = "# This is a heading"
-    node2_text = "```single-line code block```"
+    node2_text = "```This is a single-line code block```"
     node3_text = "> This is a single-line quote block"
     node4_text = "- This is a single-line item list"
     node5_text = "1. This is a single-line item list"
@@ -101,3 +102,84 @@ This is the same paragraph on a new line
                 BlockType.UNORDERED_LIST,
             ],
         )
+
+    def test_parent_heading(self):
+        parent = BlockNode.from_text(self.node1_text).to_parent()
+        self.assertIsInstance(parent, ParentNode)
+        self.assertEqual(parent.tag, "h1")
+        self.assertListEqual(parent.children, [LeafNode(None, "This is a heading")])
+        self.assertIsNone(parent.props)
+
+    def test_parent_code(self):
+        parent = BlockNode.from_text(self.node2_text).to_parent()
+        self.assertIsInstance(parent, LeafNode)
+        self.assertEqual(parent.tag, "blockquote")
+        self.assertEqual(parent.value, "This is a single-line code block")
+        self.assertIsNone(parent.props)
+
+    def test_parent_quote(self):
+        parent = BlockNode.from_text(self.node3_text).to_parent()
+        self.assertIsInstance(parent, ParentNode)
+        self.assertEqual(parent.tag, "blockquote")
+        self.assertListEqual(parent.children, [LeafNode(None, " This is a single-line quote block")])
+        self.assertIsNone(parent.props)
+
+    def test_parent_unordered(self):
+        parent = BlockNode.from_text(self.node4_text).to_parent()
+        self.assertIsInstance(parent, ParentNode)
+        self.assertEqual(parent.tag, "ul")
+        self.assertListEqual(
+            parent.children,
+            [
+                ParentNode(
+                    "li",
+                    [
+                        LeafNode(None, "This is a single-line item list"),
+                    ],
+                ),
+            ],
+        )
+        self.assertIsNone(parent.props)
+
+    def test_parent_ordered(self):
+        parent = BlockNode.from_text(self.node5_text).to_parent()
+        self.assertIsInstance(parent, ParentNode)
+        self.assertEqual(parent.tag, "ol")
+        self.assertListEqual(
+            parent.children,
+            [
+                ParentNode(
+                    "li",
+                    [
+                        LeafNode(None, "This is a single-line item list"),
+                    ],
+                ),
+            ],
+        )
+        self.assertIsNone(parent.props)
+
+    def test_parent_paragraph(self):
+        parent = BlockNode.from_text(self.node6_text).to_parent()
+        self.assertIsInstance(parent, ParentNode)
+        self.assertEqual(parent.tag, "p")
+        self.assertListEqual(
+            parent.children,
+            [
+                LeafNode(None, "This is text with a "),
+                LeafNode("b", value="bold type"),
+                LeafNode(None, value=" expression, an "),
+                LeafNode("i", value="italic type"),
+                LeafNode(None, value=" expression and a " ),
+                LeafNode("code", value="code block"),
+                LeafNode(None, value=" expression. It also has "),
+                LeafNode("a", value="a link to boot dev", props={"href": "https://www.boot.dev"}),
+                LeafNode(None, value=" and "),
+                LeafNode("img", value="", props={"alt": "an image", "src": "https://i.imgur.com/zjjcJKZ.png"}),
+                LeafNode(None, value="."),
+            ],
+        )
+        self.assertIsNone(parent.props)
+
+
+if __name__ == "__main__":
+    unittest.main()

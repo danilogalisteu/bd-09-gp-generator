@@ -57,3 +57,56 @@ class BlockNode:
     @classmethod
     def blocks_from_text(cls, text):
         return [cls.from_text(block.strip()) for block in text.split("\n\n") if block]
+
+    def to_parent(self):
+        match self.block_type:
+            case BlockType.PARAGRAPH:
+                return ParentNode(
+                    "p",
+                    [node.to_leaf() for node in TextNode.from_text(self.text)],
+                )
+            case BlockType.HEADING:
+                heading, title = self.text.split("# ", maxsplit=1)
+                level = 1 + len(heading)
+                return ParentNode(
+                    f"h{level}",
+                    [node.to_leaf() for node in TextNode.from_text(title)],
+                )
+            case BlockType.CODE:
+                return LeafNode(
+                    "blockquote",
+                    self.text.removeprefix("```").removesuffix("```"),
+                )
+            case BlockType.QUOTE:
+                text = "\n".join([
+                    line.removeprefix(">")
+                    for line in self.text.split("\n")
+                ])
+                return ParentNode(
+                    "blockquote",
+                    [node.to_leaf() for node in TextNode.from_text(text)],
+                )
+            case BlockType.UNORDERED_LIST:
+                return ParentNode(
+                    "ul",
+                    [
+                        ParentNode(
+                            "li",
+                            [node.to_leaf() for node in TextNode.from_text(line.removeprefix("- "))],
+                        )
+                        for line in self.text.split("\n")
+                    ],
+                )
+            case BlockType.ORDERED_LIST:
+                return ParentNode(
+                    "ol",
+                    [
+                        ParentNode(
+                            "li",
+                            [node.to_leaf() for node in TextNode.from_text(line.split(". ", maxsplit=1)[1])],
+                        )
+                        for line in self.text.split("\n")
+                    ],
+                )
+            case _:
+                raise ValueError("invalid block type")
