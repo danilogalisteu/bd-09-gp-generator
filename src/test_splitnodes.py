@@ -1,6 +1,6 @@
 import unittest
 
-from textnode import TextNode, TextType
+from textnode import TextNode, TextType, MD_IMG_FORMAT, MD_IMG_RE_PATTERN, MD_LINK_FORMAT, MD_LINK_RE_PATTERN
 
 
 class TestSplitNodes(unittest.TestCase):
@@ -63,7 +63,7 @@ class TestSplitNodes(unittest.TestCase):
             "This is text with an ![image](https://i.imgur.com/zjjcJKZ.png) and another ![second image](https://i.imgur.com/3elNhQu.png)",
             TextType.TEXT,
         )
-        new_nodes = TextNode.split_nodes_image([node])
+        new_nodes = TextNode.split_nodes_pattern([node], MD_IMG_RE_PATTERN, TextType.IMAGE, MD_IMG_FORMAT)
         self.assertEqual(len(new_nodes), 4)
         self.assertEqual(new_nodes[0], TextNode("This is text with an ", TextType.TEXT))
         self.assertEqual(new_nodes[1], TextNode("image", TextType.IMAGE, "https://i.imgur.com/zjjcJKZ.png"))
@@ -75,7 +75,7 @@ class TestSplitNodes(unittest.TestCase):
             "This is text with a link [to boot dev](https://www.boot.dev) and [to youtube](https://www.youtube.com/@bootdotdev)",
             TextType.TEXT,
         )
-        new_nodes = TextNode.split_nodes_link([node])
+        new_nodes = TextNode.split_nodes_pattern([node], MD_LINK_RE_PATTERN, TextType.LINK, MD_LINK_FORMAT)
         self.assertEqual(len(new_nodes), 4)
         self.assertEqual(new_nodes[0], TextNode("This is text with a link ", TextType.TEXT))
         self.assertEqual(new_nodes[1], TextNode("to boot dev", TextType.LINK, "https://www.boot.dev"))
@@ -90,8 +90,8 @@ class TestSplitNodes(unittest.TestCase):
         new_nodes = TextNode.split_nodes_delimiter([node], "`", TextType.CODE)
         new_nodes = TextNode.split_nodes_delimiter(new_nodes, "_", TextType.ITALIC)
         new_nodes = TextNode.split_nodes_delimiter(new_nodes, "**", TextType.BOLD)
-        new_nodes = TextNode.split_nodes_image(new_nodes)
-        new_nodes = TextNode.split_nodes_link(new_nodes)
+        new_nodes = TextNode.split_nodes_pattern(new_nodes, MD_IMG_RE_PATTERN, TextType.IMAGE, MD_IMG_FORMAT)
+        new_nodes = TextNode.split_nodes_pattern(new_nodes, MD_LINK_RE_PATTERN, TextType.LINK, MD_LINK_FORMAT)
         self.assertEqual(len(new_nodes), 11)
         self.assertEqual(new_nodes[0], TextNode("This is text with a ", TextType.TEXT))
         self.assertEqual(new_nodes[1], TextNode("bold type", TextType.BOLD))
