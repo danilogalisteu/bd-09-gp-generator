@@ -34,10 +34,9 @@ def build():
 
     shutil.copytree(PATH_STATIC, PATH_PUBLIC)
 
-    # generate index
-    index_from = PATH_CONTENT / "index.md"
-    index_dest = PATH_PUBLIC / "index.html"
-    generate_page(index_from, PATH_TEMPLATE, index_dest)
+    for from_path in PATH_CONTENT.glob("**/*.md"):
+        dest_path = PATH_PUBLIC / from_path.relative_to(PATH_CONTENT).with_suffix(".html")
+        generate_page(from_path, PATH_TEMPLATE, dest_path)
 
 
 def main():
