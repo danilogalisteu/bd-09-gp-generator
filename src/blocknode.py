@@ -81,11 +81,7 @@ class BlockNode:
                     [node.to_leaf() for node in TextNode.from_text(title)],
                 )
             case BlockType.CODE:
-                text = "\n".join(
-                    line for line in 
-                    self.text.removeprefix("```").removesuffix("```").split("\n")
-                    if line
-                )
+                text = "\n".join(line for line in self.text.removeprefix("```").removesuffix("```").split("\n") if line)
                 return ParentNode("pre", [LeafNode("code", text)])
             case BlockType.QUOTE:
                 text = "\n".join([line.removeprefix(">") for line in self.text.split("\n")])
