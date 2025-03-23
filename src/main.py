@@ -1,5 +1,6 @@
 import pathlib
 import shutil
+import sys
 
 from blocknode import BlockNode
 
@@ -9,7 +10,7 @@ PATH_STATIC = pathlib.Path("./static")
 PATH_PUBLIC = pathlib.Path("./public")
 
 
-def generate_page(from_path, template_path, dest_path):
+def generate_page(from_path, template_path, dest_path, basepath="/"):
     print(f"Generating page from {from_path} to {dest_path} using {template_path}")
 
     content_md = from_path.read_text()
@@ -22,13 +23,18 @@ def generate_page(from_path, template_path, dest_path):
     title = title_nodes[0].children[0].value
     content_html = doc.to_html()
     template_html = template_path.read_text()
-    page_html = template_html.replace("{{ Title }}", title).replace("{{ Content }}", content_html)
+    page_html = (
+        template_html.replace("{{ Title }}", title)
+        .replace("{{ Content }}", content_html)
+        .replace('href="/', f'href="{basepath}')
+        .replace('src="/', f'src="{basepath}')
+    )
 
     dest_path.parent.mkdir(parents=True, exist_ok=True)
     dest_path.write_text(page_html)
 
 
-def build():
+def build(basepath="/"):
     if PATH_PUBLIC.exists():
         shutil.rmtree(PATH_PUBLIC)
 
@@ -36,11 +42,15 @@ def build():
 
     for from_path in PATH_CONTENT.glob("**/*.md"):
         dest_path = PATH_PUBLIC / from_path.relative_to(PATH_CONTENT).with_suffix(".html")
-        generate_page(from_path, PATH_TEMPLATE, dest_path)
+        generate_page(from_path, PATH_TEMPLATE, dest_path, basepath)
 
 
 def main():
-    build()
+    basepath = "/"
+    if len(sys.argv) > 1:
+        basepath = sys.argv[1]
+
+    build(basepath)
 
 
 if __name__ == "__main__":
