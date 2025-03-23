@@ -74,17 +74,17 @@ class BlockNode:
                     [node.to_leaf() for node in TextNode.from_text(text)],
                 )
             case BlockType.HEADING:
-                heading, title = self.text.split("# ", maxsplit=1)
+                heading, title = self.text.strip().split("# ", maxsplit=1)
                 level = 1 + len(heading)
                 return ParentNode(
                     f"h{level}",
-                    [node.to_leaf() for node in TextNode.from_text(title)],
+                    [node.to_leaf() for node in TextNode.from_text(title.strip())],
                 )
             case BlockType.CODE:
                 text = "\n".join(line for line in self.text.removeprefix("```").removesuffix("```").split("\n") if line)
                 return ParentNode("pre", [LeafNode("code", text)])
             case BlockType.QUOTE:
-                text = "\n".join([line.removeprefix(">") for line in self.text.split("\n")])
+                text = "\n".join([line.removeprefix(">").strip() for line in self.text.split("\n")])
                 return ParentNode(
                     "blockquote",
                     [node.to_leaf() for node in TextNode.from_text(text)],
@@ -95,7 +95,7 @@ class BlockNode:
                     [
                         ParentNode(
                             "li",
-                            [node.to_leaf() for node in TextNode.from_text(line.removeprefix("- "))],
+                            [node.to_leaf() for node in TextNode.from_text(line.removeprefix("- ").strip())],
                         )
                         for line in self.text.split("\n")
                     ],
@@ -106,7 +106,7 @@ class BlockNode:
                     [
                         ParentNode(
                             "li",
-                            [node.to_leaf() for node in TextNode.from_text(line.split(". ", maxsplit=1)[1])],
+                            [node.to_leaf() for node in TextNode.from_text(line.split(". ", maxsplit=1)[1].strip())],
                         )
                         for line in self.text.split("\n")
                     ],
