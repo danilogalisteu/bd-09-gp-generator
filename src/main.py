@@ -7,7 +7,7 @@ from blocknode import BlockNode
 PATH_TEMPLATE = pathlib.Path("./template.html")
 PATH_CONTENT = pathlib.Path("./content")
 PATH_STATIC = pathlib.Path("./static")
-PATH_PUBLIC = pathlib.Path("./public")
+PATH_PUBLIC = pathlib.Path("./docs")
 
 
 def generate_page(from_path, template_path, dest_path, basepath="/"):
